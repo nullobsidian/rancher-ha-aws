@@ -1,0 +1,8 @@
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+
+cluster.rkestate
+kube_config_cluster.yml
+rke.pem

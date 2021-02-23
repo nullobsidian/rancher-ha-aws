@@ -1,0 +1,70 @@
+nodes:
+  - address: 10.0.1.54
+    user: ubuntu
+    role:
+      - controlplane
+      - etcd
+      - worker
+  - address: 10.0.2.129
+    user: ubuntu
+    role:
+      - controlplane
+      - etcd
+      - worker
+  - address: 10.0.3.149
+    user: ubuntu
+    role:
+      - controlplane
+      - etcd
+      - worker
+
+ignore_docker_version: false
+
+ssh_key_path: ./rke.pem
+
+bastion_host:
+  address: ec2-18-222-3-128.us-east-2.compute.amazonaws.com
+  user: ubuntu
+  port: 22
+  ssh_key_path: ./rke.pem
+
+cluster_name: rancher-a8w44k
+
+kubernetes_version: v1.19.7-rancher1-1
+
+services:
+  etcd:
+    backup_config:
+      enabled: true
+      interval_hours: 6
+      retention: 60
+      s3backupconfig:
+        bucket_name: "rancher-backup-yr2272v3"
+        folder: "etcd"
+        endpoint: "s3.us-east-2.amazonaws.com"
+        region: "us-east-2"
+    extra_args:
+      quota-backend-bytes: 5368709120
+    extra_args:
+      data-dir: '/var/lib/rancher/etcd/data'
+      wal-dir: '/var/lib/rancher/etcd/wal/wal_dir'
+    extra_binds:
+      - '/var/lib/etcd/data:/var/lib/rancher/etcd/data'
+      - '/var/lib/etcd/wal:/var/lib/rancher/etcd/wal'
+
+authorization:
+  mode: rbac
+
+cloud_provider:
+  name: aws
+
+network:
+  plugin: calico
+  options:
+    calico_cloud_provider: aws
+
+dns:
+  provider: coredns
+
+ingress:
+  provider: nginx
