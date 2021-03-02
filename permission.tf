@@ -20,12 +20,12 @@ resource "aws_iam_instance_profile" "worker" {
 }
 
 resource "aws_iam_instance_profile" "rancher_template_master" {
-  name     = rancher_template_master
+  name     = "rancher_template_master"
   role     = aws_iam_role.rancher_template_master.name
 }
 
 resource "aws_iam_instance_profile" "rancher_template_worker" {
-  name     = rancher_template_worker
+  name     = "rancher_template_worker"
   role     = aws_iam_role.rancher_template_worker.name
 }
 
@@ -40,12 +40,12 @@ resource "aws_iam_role" "worker" {
 }
 
 resource "aws_iam_role" "rancher_template_master" {
-  name               = rancher_template_master
+  name               = "rancher_template_master"
   assume_role_policy = jsonencode(local.role_master)
 }
 
 resource "aws_iam_role" "rancher_template_worker" {
-  name               = rancher_template_worker
+  name               = "rancher_template_worker"
   assume_role_policy = jsonencode(local.role_worker)
 }
 
@@ -276,7 +276,11 @@ locals {
 
 }
 
-// AWS Cloud Credentials
+// AWS Cloud Credentials User to Provision EC2 in Rancher
+
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
 
 resource "aws_iam_user" "cloud_creds" {
   name = var.project_name
@@ -300,7 +304,7 @@ resource "aws_iam_user_policy" "cloud_creds" {
 data "template_file" "cloud_creds" {
   template = file("${path.module}/cloud_creds.json")
   vars = {
-    region = "us-east-2"
-    account_id = "081226639030"
+    region = data.aws_region.current.name
+    account_id = data.aws_caller_identity.current.account_id
   }
 }
