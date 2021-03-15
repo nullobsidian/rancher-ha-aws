@@ -30,6 +30,7 @@ data "aws_ami" "default" {
   }
 }
 
+// Rancher Nodes - User Data
 data "template_file" "init" {
   template = file("bootstrap.sh")
 
@@ -38,7 +39,7 @@ data "template_file" "init" {
   }
 }
 
-// Nodes
+// Rancher Nodes
 resource "aws_instance" "zone_a" {
   depends_on    = [module.vpc]
 
