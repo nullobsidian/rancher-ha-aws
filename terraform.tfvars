@@ -1,5 +1,4 @@
-project_name         = "rancher.dev.goldenhippo.com"
-environment          = "developement"
-instances_per_subnet = 1
-instance_type        = "m5.xlarge"
+project_name         = "rancher.prod.goldenhippo.com"
+environment          = "production"
+instance_type        = "m5.large"
 key_name             = "rke"

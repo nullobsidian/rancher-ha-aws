@@ -1,9 +1,3 @@
-
-variable instances_per_subnet {
-  description = "Number of EC2 instances to deploy"
-  type        = number
-}
-
 variable instance_type {
   description = "Type of EC2 instance to use"
   type        = string

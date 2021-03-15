@@ -38,8 +38,8 @@ data "template_file" "init" {
   }
 }
 
+// Nodes
 resource "aws_instance" "zone_a" {
-  count         = var.instances_per_subnet
   depends_on    = [module.vpc]
 
   ami           = data.aws_ami.default.id
@@ -81,7 +81,6 @@ resource "aws_instance" "zone_a" {
 }
 
 resource "aws_instance" "zone_b" {
-  count         = var.instances_per_subnet
   depends_on    = [module.vpc]
 
   ami           = data.aws_ami.default.id
@@ -123,7 +122,6 @@ resource "aws_instance" "zone_b" {
 }
 
 resource "aws_instance" "zone_c" {
-  count         = var.instances_per_subnet
   depends_on    = [module.vpc]
 
   ami           = data.aws_ami.default.id
@@ -158,6 +156,30 @@ resource "aws_instance" "zone_c" {
   tags = merge(
     {
       Name = format("%s", var.project_name)
+    },
+    local.tags,
+    local.shared,
+  )
+}
+
+// Bastion Host
+resource "aws_instance" "bastion" {
+  depends_on    = [module.vpc]
+
+  ami           = data.aws_ami.default.id
+  instance_type = "t3.small"
+  key_name      = var.key_name
+
+  subnet_id              = module.vpc.public_subnets[0]
+  vpc_security_group_ids = flatten([aws_security_group.instances.id])
+
+  root_block_device {
+    volume_size = 30
+  }
+
+  tags = merge(
+    {
+      Name = "bastion-rancher"
     },
     local.tags,
     local.shared,

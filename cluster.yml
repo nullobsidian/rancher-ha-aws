@@ -1,17 +1,17 @@
 nodes:
-  - address: 10.0.1.54
+  - address: 10.0.1.10
     user: ubuntu
     role:
       - controlplane
       - etcd
       - worker
-  - address: 10.0.2.129
+  - address: 10.0.2.196
     user: ubuntu
     role:
       - controlplane
       - etcd
       - worker
-  - address: 10.0.3.149
+  - address: 10.0.3.89
     user: ubuntu
     role:
       - controlplane
@@ -20,15 +20,15 @@ nodes:
 
 ignore_docker_version: false
 
-ssh_key_path: ./rke.pem
+ssh_key_path: ./rke
 
 bastion_host:
-  address: ec2-18-222-3-128.us-east-2.compute.amazonaws.com
+  address: ec2-3-140-195-66.us-east-2.compute.amazonaws.com
   user: ubuntu
   port: 22
-  ssh_key_path: ./rke.pem
+  ssh_key_path: ./rke
 
-cluster_name: rancher-a8w44k
+cluster_name: rancher.prod.goldenhippo.com
 
 kubernetes_version: v1.19.7-rancher1-1
 
@@ -43,8 +43,6 @@ services:
         folder: "etcd"
         endpoint: "s3.us-east-2.amazonaws.com"
         region: "us-east-2"
-    extra_args:
-      quota-backend-bytes: 5368709120
     extra_args:
       data-dir: '/var/lib/rancher/etcd/data'
       wal-dir: '/var/lib/rancher/etcd/wal/wal_dir'
