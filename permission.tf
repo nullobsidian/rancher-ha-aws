@@ -277,9 +277,7 @@ locals {
 }
 
 // AWS Cloud Credentials User to Provision EC2 in Rancher
-
 data "aws_caller_identity" "current" {}
-
 data "aws_region" "current" {}
 
 resource "aws_iam_user" "cloud_creds" {

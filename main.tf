@@ -1,5 +1,4 @@
 provider "aws" {}
-
 provider "template" {}
 
 locals {
@@ -39,7 +38,7 @@ data "template_file" "init" {
   }
 }
 
-// Rancher Nodes
+// Rancher Node Pool
 resource "aws_instance" "default" {
   count         = var.node_count
 
