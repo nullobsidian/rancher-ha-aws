@@ -82,6 +82,14 @@ resource "aws_iam_policy" "etcd_backup" {
   policy      = data.template_file.etcd_backup.rendered
 }
 
+data "template_file" "etcd_backup" {
+  template = file("${path.module}/etcd_backup.json")
+  vars = {
+    s3_backup = aws_s3_bucket.backup.id
+  }
+}
+
+
 // IAM Role Policy Attachment
 resource "aws_iam_role_policy_attachment" "controlplane" {
   role       = aws_iam_role.master.name
@@ -290,12 +298,5 @@ data "template_file" "cloud_creds" {
   vars = {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id
-  }
-}
-
-data "template_file" "etcd_backup" {
-  template = file("${path.module}/etcd_backup.json")
-  vars = {
-    s3_backup = aws_s3_bucket.backup.id
   }
 }
