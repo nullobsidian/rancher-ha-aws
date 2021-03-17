@@ -19,3 +19,7 @@ output "cloud_access_key" {
 output "cloud_secret_key" {
     value = aws_iam_access_key.cloud_creds.secret
 }
+
+output "s3_backup" {
+    value = aws_s3_bucket.backup.id
+}

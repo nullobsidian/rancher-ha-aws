@@ -1,14 +1,21 @@
 // AWS Cloud Provider
-
+// Names
 locals {
   master       = join("-", [var.project_name, "master"])
   worker       = join("-", [var.project_name, "worker"])
+}
+
+locals {
   controlplane = join("-", [var.project_name, "controlplane"])
   etcd         = join("-", [var.project_name, "etcd"])
+}
+
+locals {
   etcd_backup  = join("-", [var.project_name, "etcd_backup"])
   cloud_creds  = join("-", [var.project_name, "cloud_creds"])
 }
 
+//IAM Profiles
 resource "aws_iam_instance_profile" "master" {
   name     = local.master
   role     = aws_iam_role.master.name
@@ -29,6 +36,7 @@ resource "aws_iam_instance_profile" "rancher_template_worker" {
   role     = aws_iam_role.rancher_template_worker.name
 }
 
+// IAM Roles
 resource "aws_iam_role" "master" {
   name               = local.master
   assume_role_policy = jsonencode(local.role_master)
@@ -49,6 +57,7 @@ resource "aws_iam_role" "rancher_template_worker" {
   assume_role_policy = jsonencode(local.role_worker)
 }
 
+// IAM Policy
 resource "aws_iam_policy" "controlplane" {
   name        = local.controlplane
   path        = "/"
@@ -70,9 +79,10 @@ resource "aws_iam_policy" "worker" {
 resource "aws_iam_policy" "etcd_backup" {
   name        = local.etcd_backup
   path        = "/"
-  policy      = jsonencode(local.policy_etcd_backup)
+  policy      = data.template_file.etcd_backup.rendered
 }
 
+// IAM Role Policy Attachment
 resource "aws_iam_role_policy_attachment" "controlplane" {
   role       = aws_iam_role.master.name
   policy_arn = aws_iam_policy.controlplane.arn
@@ -103,6 +113,7 @@ resource "aws_iam_role_policy_attachment" "etcd_template" {
   policy_arn = aws_iam_policy.etcd.arn
 }
 
+// Locals
 locals {
   # IAM Role
   role_master = {
@@ -249,31 +260,6 @@ locals {
       }
     ]
   }
-
-  policy_etcd_backup = {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "s3:ListBucket"
-        ],
-        "Resource": [
-          "arn:aws:s3:::rancher-backup-yr2272v3"
-        ]
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-          "s3:*Object"
-        ],
-        "Resource": [
-          "arn:aws:s3:::rancher-backup-yr2272v3/*"
-        ]
-      }
-    ]
-  }
-
 }
 
 // AWS Cloud Credentials User to Provision EC2 in Rancher
@@ -304,5 +290,12 @@ data "template_file" "cloud_creds" {
   vars = {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id
+  }
+}
+
+data "template_file" "etcd_backup" {
+  template = file("${path.module}/etcd_backup.json")
+  vars = {
+    s3_backup = aws_s3_bucket.backup.id
   }
 }
