@@ -40,96 +40,14 @@ data "template_file" "init" {
 }
 
 // Rancher Nodes
-resource "aws_instance" "zone_a" {
-  depends_on    = [module.vpc]
+resource "aws_instance" "default" {
+  count         = var.node_count
 
   ami           = data.aws_ami.default.id
   instance_type = var.instance_type
   key_name      = var.key_name
 
-  subnet_id              = module.vpc.private_subnets[0]
-  vpc_security_group_ids = flatten([aws_security_group.instances.id])
-
-  iam_instance_profile   = aws_iam_instance_profile.master.id
-
-  user_data = data.template_file.init.rendered
-
-  root_block_device {
-    volume_size = 250
-  }
-
-  ebs_block_device {
-    device_name = "/dev/sdb"
-    volume_type = "io1"
-    volume_size = 50
-    iops        = 1500
-  }
-
-  ebs_block_device {
-    device_name = "/dev/sdc"
-    volume_type = "io1"
-    volume_size = 50
-    iops        = 1500
-  }
-
-  tags = merge(
-    {
-      Name = format("%s", var.project_name)
-    },
-    local.tags,
-    local.shared,
-  )
-}
-
-resource "aws_instance" "zone_b" {
-  depends_on    = [module.vpc]
-
-  ami           = data.aws_ami.default.id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-
-  subnet_id              = module.vpc.private_subnets[1]
-  vpc_security_group_ids = flatten([aws_security_group.instances.id])
-
-  iam_instance_profile   = aws_iam_instance_profile.master.id
-
-  user_data = data.template_file.init.rendered
-
-  root_block_device {
-    volume_size = 250
-  }
-
-  ebs_block_device {
-    device_name = "/dev/sdb"
-    volume_type = "io1"
-    volume_size = 50
-    iops        = 1500
-  }
-
-  ebs_block_device {
-    device_name = "/dev/sdc"
-    volume_type = "io1"
-    volume_size = 50
-    iops        = 1500
-  }
-
-  tags = merge(
-    {
-      Name = format("%s", var.project_name)
-    },
-    local.tags,
-    local.shared,
-  )
-}
-
-resource "aws_instance" "zone_c" {
-  depends_on    = [module.vpc]
-
-  ami           = data.aws_ami.default.id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-
-  subnet_id              = module.vpc.private_subnets[2]
+  subnet_id              = module.vpc.private_subnets[count.index % length(module.vpc.private_subnets)]
   vpc_security_group_ids = flatten([aws_security_group.instances.id])
 
   iam_instance_profile   = aws_iam_instance_profile.master.id
@@ -165,8 +83,6 @@ resource "aws_instance" "zone_c" {
 
 // Bastion Host
 resource "aws_instance" "bastion" {
-  depends_on    = [module.vpc]
-
   ami           = data.aws_ami.default.id
   instance_type = "t3.small"
   key_name      = var.key_name

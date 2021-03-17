@@ -1,8 +1,6 @@
 output "instances_ips" {
     value = [
-        aws_instance.zone_a.private_ip, 
-        aws_instance.zone_b.private_ip, 
-        aws_instance.zone_c.private_ip,
+        aws_instance.default[*].private_ip, 
     ]
 }
 
