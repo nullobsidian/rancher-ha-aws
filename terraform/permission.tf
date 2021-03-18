@@ -267,41 +267,41 @@ data "template_file" "cloud_creds" {
 // AWS EC2 Node Templates
 // IAM Profile
 resource "aws_iam_instance_profile" "rancher_ec2_template_master" {
-  name = "rancher_ec2_template_master"
-  role = aws_iam_role.rancher_template_master.name
+  name = join("-", ["rancher_ec2_template_master", var.cluster_id])
+  role = aws_iam_role.rancher_ec2_template_master.name
 }
 
 resource "aws_iam_instance_profile" "rancher_ec2_template_worker" {
-  name = "rancher_ec2_template_worker"
-  role = aws_iam_role.rancher_template_worker.name
+  name = join("-", ["rancher_ec2_template_worker", var.cluster_id])
+  role = aws_iam_role.rancher_ec2_template_worker.name
 }
 
 // IAM Roles
 resource "aws_iam_role" "rancher_ec2_template_master" {
-  name               = "rancher_ec2_template_master"
+  name               = join("-", ["rancher_ec2_template_master", var.cluster_id])
   assume_role_policy = jsonencode(local.role_master)
 }
 
 resource "aws_iam_role" "rancher_ec2_template_worker" {
-  name               = "rancher_ec2_template_worker"
+  name               = join("-", ["rancher_ec2_template_worker", var.cluster_id])
   assume_role_policy = jsonencode(local.role_worker)
 }
 
 // IAM Policies
 resource "aws_iam_policy" "rancher_ec2_template_controlplane" {
-  name   = "rancher_ec2_template_controlplane"
+  name   = join("-", ["rancher_ec2_template_controlplane", var.cluster_id])
   path   = "/"
   policy = jsonencode(local.policy_controlplane)
 }
 
 resource "aws_iam_policy" "rancher_ec2_template_etcd" {
-  name   = "rancher_ec2_template_etcd"
+  name   = join("-", ["rancher_ec2_template_etcd", var.cluster_id])
   path   = "/"
   policy = jsonencode(local.policy_etcd)
 }
 
 resource "aws_iam_policy" "rancher_ec2_template_worker" {
-  name   = "rancher_ec2_template_worker"
+  name   = join("-", ["rancher_ec2_template_worker", var.cluster_id])
   path   = "/"
   policy = jsonencode(local.policy_worker)
 }

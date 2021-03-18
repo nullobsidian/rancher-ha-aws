@@ -5,7 +5,7 @@
     include_vars:
       file: config.json
       name: config
-  - name: Create Dynamo table for locking
+  - name: Create DynamoDB table for locking
     community.aws.dynamodb_table:
       name: "rancher-lock-{{ config.cluster_id }}"
       state: present
@@ -21,12 +21,12 @@
       versioning: yes
       encryption: AES256
       force: yes
-  - name: Create S3 state bucket iac directory iac
+  - name: Create S3 state bucket IAC directory
     amazon.aws.aws_s3:
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'iac/'
       mode: create
-  - name: Create S3 state bucket ke directory rke
+  - name: Create S3 state bucket RKE directory
     amazon.aws.aws_s3:
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'rke/'
