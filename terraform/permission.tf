@@ -11,23 +11,23 @@ locals {
 
 //IAM Profiles
 resource "aws_iam_instance_profile" "master" {
-  name     = local.master
-  role     = aws_iam_role.master.name
+  name = local.master
+  role = aws_iam_role.master.name
 }
 
 resource "aws_iam_instance_profile" "worker" {
-  name     = local.worker
-  role     = aws_iam_role.worker.name
+  name = local.worker
+  role = aws_iam_role.worker.name
 }
 
 resource "aws_iam_instance_profile" "rancher_template_master" {
-  name     = "rancher_template_master"
-  role     = aws_iam_role.rancher_template_master.name
+  name = "rancher_template_master"
+  role = aws_iam_role.rancher_template_master.name
 }
 
 resource "aws_iam_instance_profile" "rancher_template_worker" {
-  name     = "rancher_template_worker"
-  role     = aws_iam_role.rancher_template_worker.name
+  name = "rancher_template_worker"
+  role = aws_iam_role.rancher_template_worker.name
 }
 
 // IAM Roles
@@ -53,27 +53,27 @@ resource "aws_iam_role" "rancher_template_worker" {
 
 // IAM Policy
 resource "aws_iam_policy" "controlplane" {
-  name        = local.controlplane
-  path        = "/"
-  policy      = jsonencode(local.policy_controlplane)
+  name   = local.controlplane
+  path   = "/"
+  policy = jsonencode(local.policy_controlplane)
 }
 
 resource "aws_iam_policy" "etcd" {
-  name        = local.etcd
-  path        = "/"
-  policy      = jsonencode(local.policy_etcd)
+  name   = local.etcd
+  path   = "/"
+  policy = jsonencode(local.policy_etcd)
 }
 
 resource "aws_iam_policy" "worker" {
-  name        = local.worker
-  path        = "/"
-  policy      = jsonencode(local.policy_worker)
+  name   = local.worker
+  path   = "/"
+  policy = jsonencode(local.policy_worker)
 }
 
 resource "aws_iam_policy" "etcd_backup" {
-  name        = local.etcd_backup
-  path        = "/"
-  policy      = data.template_file.etcd_backup.rendered
+  name   = local.etcd_backup
+  path   = "/"
+  policy = data.template_file.etcd_backup.rendered
 }
 
 data "template_file" "etcd_backup" {
