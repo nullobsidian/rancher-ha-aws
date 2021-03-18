@@ -5,7 +5,7 @@ Rancher, the open-source multi-cluster orchestration platform, where operational
 This Infrastructure as Code implents high-availability Kubernetes installation achieved by running Rancher on multiple nodes.
 
 Rancher Management HA Nodes are 3, 5, or 7 (Maintain quorum)
-https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/
+- https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/
 
 Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS
-https://miniwebtool.com/random-string-generator/
+- https://cutt.ly/SxqZT23
