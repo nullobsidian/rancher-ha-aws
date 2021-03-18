@@ -17,13 +17,6 @@ module "vpc" {
   one_nat_gateway_per_az = true
   single_nat_gateway = false
 
-//    tags = {
-//        "ClusterID"   = format("%s", var.cluster_id)
-//        "Environment" = format("%s", var.environment)
-//        "Terraform"   = "true"
-//        join("", ["kubernetes.io/cluster/", var.cluster_id]) = "shared"
-//    }
-
   tags = merge(
     local.tags,
     local.shared,
