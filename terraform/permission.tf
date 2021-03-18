@@ -1,18 +1,12 @@
 // AWS Cloud Provider
 // Names
 locals {
-  master       = join("-", [var.project_name, "master"])
-  worker       = join("-", [var.project_name, "worker"])
-}
-
-locals {
-  controlplane = join("-", [var.project_name, "controlplane"])
-  etcd         = join("-", [var.project_name, "etcd"])
-}
-
-locals {
-  etcd_backup  = join("-", [var.project_name, "etcd_backup"])
-  cloud_creds  = join("-", [var.project_name, "cloud_creds"])
+  master       = join("-", ["rancher-master", var.cluster_id])
+  worker       = join("-", ["rancher-worker", var.cluster_id])
+  controlplane = join("-", ["rancher-controlplane", var.cluster_id])
+  etcd         = join("-", ["rancher-etcd", var.cluster_id])
+  etcd_backup  = join("-", ["rancher-etcd_backup", var.cluster_id])
+  cloud_creds  = join("-", ["rancher-cloud_creds", var.cluster_id])
 }
 
 //IAM Profiles
@@ -83,12 +77,11 @@ resource "aws_iam_policy" "etcd_backup" {
 }
 
 data "template_file" "etcd_backup" {
-  template = file("${path.module}/etcd_backup.json")
+  template = file("${path.module}/data/etcd_backup.json")
   vars = {
     s3_backup = aws_s3_bucket.backup.id
   }
 }
-
 
 // IAM Role Policy Attachment
 resource "aws_iam_role_policy_attachment" "controlplane" {
@@ -275,12 +268,13 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_iam_user" "cloud_creds" {
-  name = var.project_name
+  name = join("-", ["rancher-admin", var.cluster_id])
   path = "/"
 
-  tags = {
-    test = "test"
-  }
+  tags = merge(
+    local.tags,
+    local.shared,
+  )
 }
 
 resource "aws_iam_access_key" "cloud_creds" {
@@ -294,7 +288,7 @@ resource "aws_iam_user_policy" "cloud_creds" {
 }
 
 data "template_file" "cloud_creds" {
-  template = file("${path.module}/cloud_creds.json")
+  template = file("${path.module}/data/cloud_creds.json")
   vars = {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id

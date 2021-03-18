@@ -1,17 +1,24 @@
 provider "aws" {}
+
 provider "template" {}
+
+terraform {
+  backend "s3" {}
+}
 
 locals {
   tags = {
-    "Terraform"   = "true"
+    "ClusterID"  = format("%s", var.cluster_id)
     "Environment" = format("%s", var.environment)
+    "Terraform"   = "true"
   }
   owned  = {
-    join("", ["kubernetes.io/cluster/", var.project_name]) = "owned"
+    join("", ["kubernetes.io/cluster/", var.cluster_id]) = "owned"
   }
   shared  = {
-    join("", ["kubernetes.io/cluster/", var.project_name]) = "shared"
+    join("", ["kubernetes.io/cluster/", var.cluster_id]) = "shared"
   }
+  cluster_name = join("", [ "rancher-", var.environment, "-", var.cluster_id])
 }
 
 data "aws_ami" "default" {
@@ -31,7 +38,7 @@ data "aws_ami" "default" {
 
 // Rancher Nodes - User Data
 data "template_file" "init" {
-  template = file("bootstrap.sh")
+  template = file("data/bootstrap.sh")
 
   vars = {
     docker_version = "19.03"
@@ -40,6 +47,7 @@ data "template_file" "init" {
 
 // Rancher Node Pool
 resource "aws_instance" "default" {
+  depends_on    = [module.vpc]
   count         = var.node_count
 
   ami           = data.aws_ami.default.id
@@ -73,7 +81,7 @@ resource "aws_instance" "default" {
 
   tags = merge(
     {
-      Name = format("%s", var.project_name)
+      Name = format("%s", local.cluster_name)
     },
     local.tags,
     local.shared,
@@ -82,6 +90,7 @@ resource "aws_instance" "default" {
 
 // Bastion Host
 resource "aws_instance" "bastion" {
+  depends_on    = [module.vpc]
   ami           = data.aws_ami.default.id
   instance_type = "t3.small"
   key_name      = var.key_name
@@ -95,7 +104,7 @@ resource "aws_instance" "bastion" {
 
   tags = merge(
     {
-      Name = "bastion-rancher"
+      Name = join("", [ "bastion-rancher-", var.cluster_id])
     },
     local.tags,
     local.shared,

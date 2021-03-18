@@ -1,0 +1,24 @@
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: Delete all nodes and vpc
+    community.general.terraform:
+      project_path: 'terraform/'
+      state: absent
+      init_reconfigure: yes
+      backend_config:
+        bucket: "rancher-state-{{ config.cluster_id }}"
+        key: "iac/terraform.tfstate"
+        region: "us-east-2"
+        dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
+        encrypt: true
+  - name: Delete S3 state bucket
+    amazon.aws.s3_bucket:
+      name: "rancher-state-{{ config.cluster_id }}"
+      state: absent
+      force: yes
+  - name: Create Dynamo table for locking
+    community.aws.dynamodb_table:
+      name: "rancher-lock-{{ config.cluster_id }}"
+      state: absent
+  

@@ -1,0 +1,46 @@
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: Import configuration
+    include_vars:
+      file: config.json
+      name: config
+  - name: Create Dynamo table for locking
+    community.aws.dynamodb_table:
+      name: "rancher-lock-{{ config.cluster_id }}"
+      state: present
+      hash_key_name: LockID
+      hash_key_type: STRING
+      read_capacity: 5
+      write_capacity: 5
+  - name: Create S3 state bucket
+    amazon.aws.s3_bucket:
+      name: "rancher-state-{{ config.cluster_id }}"
+      state: present
+      region: "{{ config.region }}"
+      versioning: yes
+      encryption: AES256
+      force: yes
+  - name: Create S3 state bucket iac directory iac
+    amazon.aws.aws_s3:
+      bucket: "rancher-state-{{ config.cluster_id }}"
+      object: 'iac/'
+      mode: create
+  - name: Create S3 state bucket ke directory rke
+    amazon.aws.aws_s3:
+      bucket: "rancher-state-{{ config.cluster_id }}"
+      object: 'rke/'
+      mode: create
+  - name: Deploy highly-available EC2s on AWS
+    community.general.terraform:
+      project_path: 'terraform/'
+      state: present
+      force_init: yes
+      init_reconfigure: yes
+      variables_files: '../config.json'
+      backend_config:
+        bucket: "rancher-state-{{ config.cluster_id }}"
+        key: "iac/terraform.tfstate"
+        region: "{{ config.region }}"
+        dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
+        encrypt: "true"

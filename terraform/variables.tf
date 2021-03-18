@@ -8,8 +8,8 @@ variable instance_type {
   type        = string
 }
 
-variable project_name {
-  description = "Name of the project"
+variable cluster_id {
+  description = "Cluster unique identifier - 8 character"
   type        = string
 }
 
