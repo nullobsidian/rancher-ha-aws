@@ -1,5 +1,4 @@
 // AWS Cloud Provider
-// Names
 locals {
   master       = join("-", ["rancher-master", var.cluster_id])
   worker       = join("-", ["rancher-worker", var.cluster_id])
@@ -7,6 +6,13 @@ locals {
   etcd         = join("-", ["rancher-etcd", var.cluster_id])
   etcd_backup  = join("-", ["rancher-etcd_backup", var.cluster_id])
   cloud_creds  = join("-", ["rancher-cloud_creds", var.cluster_id])
+}
+
+data "template_file" "etcd_backup" {
+  template = file("${path.module}/data/etcd_backup.json")
+  vars = {
+    s3_backup = aws_s3_bucket.backup.id
+  }
 }
 
 //IAM Profiles
@@ -20,16 +26,6 @@ resource "aws_iam_instance_profile" "worker" {
   role = aws_iam_role.worker.name
 }
 
-resource "aws_iam_instance_profile" "rancher_template_master" {
-  name = "rancher_template_master"
-  role = aws_iam_role.rancher_template_master.name
-}
-
-resource "aws_iam_instance_profile" "rancher_template_worker" {
-  name = "rancher_template_worker"
-  role = aws_iam_role.rancher_template_worker.name
-}
-
 // IAM Roles
 resource "aws_iam_role" "master" {
   name               = local.master
@@ -38,16 +34,6 @@ resource "aws_iam_role" "master" {
 
 resource "aws_iam_role" "worker" {
   name               = local.worker 
-  assume_role_policy = jsonencode(local.role_worker)
-}
-
-resource "aws_iam_role" "rancher_template_master" {
-  name               = "rancher_template_master"
-  assume_role_policy = jsonencode(local.role_master)
-}
-
-resource "aws_iam_role" "rancher_template_worker" {
-  name               = "rancher_template_worker"
   assume_role_policy = jsonencode(local.role_worker)
 }
 
@@ -76,13 +62,6 @@ resource "aws_iam_policy" "etcd_backup" {
   policy = data.template_file.etcd_backup.rendered
 }
 
-data "template_file" "etcd_backup" {
-  template = file("${path.module}/data/etcd_backup.json")
-  vars = {
-    s3_backup = aws_s3_bucket.backup.id
-  }
-}
-
 // IAM Role Policy Attachment
 resource "aws_iam_role_policy_attachment" "controlplane" {
   role       = aws_iam_role.master.name
@@ -94,24 +73,14 @@ resource "aws_iam_role_policy_attachment" "etcd" {
   policy_arn = aws_iam_policy.etcd.arn
 }
 
-resource "aws_iam_role_policy_attachment" "worker" {
-  role       = aws_iam_role.worker.name
-  policy_arn = aws_iam_policy.worker.arn
-}
-
 resource "aws_iam_role_policy_attachment" "etcd_backup" {
   role       = aws_iam_role.master.name
   policy_arn = aws_iam_policy.etcd_backup.arn
 }
 
-resource "aws_iam_role_policy_attachment" "controlplane_template" {
-  role       = aws_iam_role.master.name
-  policy_arn = aws_iam_policy.controlplane.arn
-}
-
-resource "aws_iam_role_policy_attachment" "etcd_template" {
-  role       = aws_iam_role.master.name
-  policy_arn = aws_iam_policy.etcd.arn
+resource "aws_iam_role_policy_attachment" "worker" {
+  role       = aws_iam_role.worker.name
+  policy_arn = aws_iam_policy.worker.arn
 }
 
 // Locals
@@ -293,4 +262,62 @@ data "template_file" "cloud_creds" {
     region = data.aws_region.current.name
     account_id = data.aws_caller_identity.current.account_id
   }
+}
+
+// AWS EC2 Node Templates
+// IAM Profile
+resource "aws_iam_instance_profile" "rancher_ec2_template_master" {
+  name = "rancher_ec2_template_master"
+  role = aws_iam_role.rancher_template_master.name
+}
+
+resource "aws_iam_instance_profile" "rancher_ec2_template_worker" {
+  name = "rancher_ec2_template_worker"
+  role = aws_iam_role.rancher_template_worker.name
+}
+
+// IAM Roles
+resource "aws_iam_role" "rancher_ec2_template_master" {
+  name               = "rancher_ec2_template_master"
+  assume_role_policy = jsonencode(local.role_master)
+}
+
+resource "aws_iam_role" "rancher_ec2_template_worker" {
+  name               = "rancher_ec2_template_worker"
+  assume_role_policy = jsonencode(local.role_worker)
+}
+
+// IAM Policies
+resource "aws_iam_policy" "rancher_ec2_template_controlplane" {
+  name   = "rancher_ec2_template_controlplane"
+  path   = "/"
+  policy = jsonencode(local.policy_controlplane)
+}
+
+resource "aws_iam_policy" "rancher_ec2_template_etcd" {
+  name   = "rancher_ec2_template_etcd"
+  path   = "/"
+  policy = jsonencode(local.policy_etcd)
+}
+
+resource "aws_iam_policy" "rancher_ec2_template_worker" {
+  name   = "rancher_ec2_template_worker"
+  path   = "/"
+  policy = jsonencode(local.policy_worker)
+}
+
+// IAM Role Policy Attachment
+resource "aws_iam_role_policy_attachment" "rancher_ec2_template_controlplane" {
+  role       = aws_iam_role.rancher_ec2_template_master.name
+  policy_arn = aws_iam_policy.rancher_ec2_template_controlplane.arn
+}
+
+resource "aws_iam_role_policy_attachment" "rancher_ec2_template_etcd" {
+  role       = aws_iam_role.rancher_ec2_template_master.name
+  policy_arn = aws_iam_policy.rancher_ec2_template_etcd.arn
+}
+
+resource "aws_iam_role_policy_attachment" "rancher_ec2_template_worker" {
+  role       = aws_iam_role.rancher_ec2_template_worker.name
+  policy_arn = aws_iam_policy.rancher_ec2_template_worker.arn
 }

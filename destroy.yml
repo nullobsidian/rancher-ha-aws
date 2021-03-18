@@ -17,8 +17,7 @@
       name: "rancher-state-{{ config.cluster_id }}"
       state: absent
       force: yes
-  - name: Create Dynamo table for locking
+  - name: Delete Dynamo table for locking
     community.aws.dynamodb_table:
       name: "rancher-lock-{{ config.cluster_id }}"
       state: absent
-  
