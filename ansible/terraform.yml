@@ -69,7 +69,4 @@
     vars:
       nodes: "{{ terraform.outputs.instances_ips.value | ipaddr }}"
       version: "{{ rke_version.stdout }}"
-#  - name: Provision RKE
-#    shell:
-#      cmd: rke up --config ../rke/cluster.yml
   - meta: refresh_inventory
