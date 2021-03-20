@@ -1,21 +1,19 @@
 ---
-- name: Deploy RKE on Provisioned EC2 nodes
+- name: Deploying Kubernetes with RKE
   hosts: localhost
   gather_facts: false
   tasks:
-  - name: Import configuration
+  
+  - name: Import User Variables
     include_vars:
       file: "../config.json"
       name: config
-  - name: Import Terraform Outputs
-    community.general.terraform:
-      project_path: '../terraform/'
-      state: present
-      variables_files: '../config.json'
-      backend_config:
-        bucket: "rancher-state-{{ config.cluster_id }}"
-        key: "iac/terraform.tfstate"
-        region: "{{ config.region }}"
-        dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
-        encrypt: "true"
-    register: terraform
+#  - name: RKE Kubernetes Installation
+#    shell:
+#      cmd: rke up --config ../rke/cluster.yml
+  - name: S3 State Bucket - Upload RKE State and Kube config files
+    community.aws.s3_sync:
+      bucket: "rancher-state-{{ config.cluster_id }}"
+      file_root: '../rke/'
+      exclude: "*.j2"
+      key_prefix: 'rke/'

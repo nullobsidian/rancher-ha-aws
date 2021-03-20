@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-echo -e "localhost ansible_connection=\"local\"\n" > .hosts
+echo -e "localhost ansible_connection=\"local\"\n" > /etc/ansible/hosts
 
-ansible-playbook -vvvvvvvvv -i.hosts ansible/infrastructure.yml
+ansible-playbook ansible/terraform.yml
 
-# ansible-playbook -i .hosts ansible/rke.yml
+# ansible-playbook ansible/rke.yml
 
-rm .hosts
+# ansible-playbook ansible/rancher.yml

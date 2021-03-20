@@ -1,6 +1,6 @@
 ---
 - name: Install Rancher on RKE
-  hosts: "{{ terraform.outputs.bastion.value }}"
+  hosts: bastion
   remote_user: ubuntu
   gather_facts: false
   tasks:

@@ -1,3 +1,6 @@
 ---
-  - import_playbook: ansible/infrastructure.yml
-  - import_playbook: ansible/rancher.yml
+- name: Deploy Infrastructure
+  import_playbook: ansible/terraform.yml
+
+- name: Rancher
+  import_playbook: ansible/rancher.yml

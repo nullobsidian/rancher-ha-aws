@@ -3,11 +3,11 @@
   hosts: localhost
   gather_facts: false
   tasks:
-  - name: Import configuration
+  - name: Import User Variables
     include_vars:
       file: "../config.json"
       name: config
-  - name: Create DynamoDB table for locking
+  - name: DynamoDB - Create table for Locking
     community.aws.dynamodb_table:
       name: "rancher-lock-{{ config.cluster_id }}"
       state: present
@@ -15,7 +15,7 @@
       hash_key_type: STRING
       read_capacity: 5
       write_capacity: 5
-  - name: Create S3 state bucket
+  - name: S3 State Bucket - Create
     amazon.aws.s3_bucket:
       name: "rancher-state-{{ config.cluster_id }}"
       state: present
@@ -23,22 +23,22 @@
       versioning: yes
       encryption: AES256
       force: yes
-  - name: Create S3 state bucket IAC directory
+  - name: S3 State Bucket - Create IAC directory
     amazon.aws.aws_s3:
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'iac/'
       mode: create
-  - name: Create S3 state bucket RKE directory
+  - name: S3 State Bucket - Create RKE directory
     amazon.aws.aws_s3:
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'rke/'
       mode: create
-  - name: Create S3 state bucket SSH directory
+  - name: S3 State Bucket - Create SSH directory
     amazon.aws.aws_s3:
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'ssh/'
       mode: create
-  - name: Deploy Infrastructure 
+  - name: Deploy Infrastructure
     community.general.terraform:
       project_path: '../terraform/'
       state: present
@@ -52,17 +52,17 @@
         dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
         encrypt: "true"
     register: terraform
-  - name: Add Bastion to host file
+  - name: Append bastion to hosts file
     blockinfile:
-      path: ../.hosts
+      path: /etc/ansible/hosts
       block: |
         [bastion]
         "{{ terraform.outputs.bastion.value }}" ansible_ssh_private_key_file="{{ config.ssh }}"
-  - name: Run latest RKE supported K8s version
+  - name: Register latest RKE supported K8s version
     shell: 
       cmd: rke config --list-version
     register: rke_version
-  - name: Generate cluster.yml to provision RKE
+  - name: Generate RKE Configuration - cluster.yml
     template:
       src: '../rke/cluster.j2'
       dest: '../rke/cluster.yml'
@@ -72,3 +72,4 @@
 #  - name: Provision RKE
 #    shell:
 #      cmd: rke up --config ../rke/cluster.yml
+  - meta: refresh_inventory
