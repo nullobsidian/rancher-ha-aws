@@ -104,7 +104,7 @@ resource "aws_instance" "bastion" {
 
   tags = merge(
     {
-      Name = join("", [ "bastion-rancher-", var.cluster_id])
+      Name = join("-", [ "rancher-bastion", var.cluster_id])
     },
     local.tags,
     local.shared,

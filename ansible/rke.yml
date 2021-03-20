@@ -1,0 +1,21 @@
+---
+- name: Deploy RKE on Provisioned EC2 nodes
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: Import configuration
+    include_vars:
+      file: "../config.json"
+      name: config
+  - name: Import Terraform Outputs
+    community.general.terraform:
+      project_path: '../terraform/'
+      state: present
+      variables_files: '../config.json'
+      backend_config:
+        bucket: "rancher-state-{{ config.cluster_id }}"
+        key: "iac/terraform.tfstate"
+        region: "{{ config.region }}"
+        dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
+        encrypt: "true"
+    register: terraform

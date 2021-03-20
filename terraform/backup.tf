@@ -14,10 +14,3 @@ resource "aws_s3_bucket_object" "etcd" {
   key    = "etcd/"
   content_type = "application/x-directory"
 }
-
-resource "aws_s3_bucket_object" "ssh" {
-  bucket = aws_s3_bucket.backup.id
-  acl    = "private"
-  key    = "ssh/"
-  content_type = "application/x-directory"
-}

@@ -1,9 +1,11 @@
-- hosts: localhost
-  connection: local
+---
+- name: Provision Higly-Available EC2 and VPC on AWS
+  hosts: localhost
+  gather_facts: false
   tasks:
   - name: Import configuration
     include_vars:
-      file: config.json
+      file: "../config.json"
       name: config
   - name: Create DynamoDB table for locking
     community.aws.dynamodb_table:
@@ -31,9 +33,14 @@
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'rke/'
       mode: create
-  - name: Deploy highly-available EC2s on AWS
+  - name: Create S3 state bucket SSH directory
+    amazon.aws.aws_s3:
+      bucket: "rancher-state-{{ config.cluster_id }}"
+      object: 'ssh/'
+      mode: create
+  - name: Deploy Infrastructure 
     community.general.terraform:
-      project_path: 'terraform/'
+      project_path: '../terraform/'
       state: present
       force_init: yes
       init_reconfigure: yes
@@ -44,3 +51,24 @@
         region: "{{ config.region }}"
         dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
         encrypt: "true"
+    register: terraform
+  - name: Add Bastion to host file
+    blockinfile:
+      path: ../.hosts
+      block: |
+        [bastion]
+        "{{ terraform.outputs.bastion.value }}" ansible_ssh_private_key_file="{{ config.ssh }}"
+  - name: Run latest RKE supported K8s version
+    shell: 
+      cmd: rke config --list-version
+    register: rke_version
+  - name: Generate cluster.yml to provision RKE
+    template:
+      src: '../rke/cluster.j2'
+      dest: '../rke/cluster.yml'
+    vars:
+      nodes: "{{ terraform.outputs.instances_ips.value | ipaddr }}"
+      version: "{{ rke_version.stdout }}"
+#  - name: Provision RKE
+#    shell:
+#      cmd: rke up --config ../rke/cluster.yml

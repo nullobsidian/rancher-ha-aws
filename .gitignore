@@ -5,4 +5,5 @@ terraform.tfstate.backup
 
 cluster.rkestate
 kube_config_cluster.yml
-rke.pem
+cluster.yml
+.hosts

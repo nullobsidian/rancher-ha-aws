@@ -1,7 +1,5 @@
 output "instances_ips" {
-  value = [
-    aws_instance.default[*].private_ip, 
-  ]
+  value = tolist(aws_instance.default[*].private_ip)
 }
 
 output "bastion" {

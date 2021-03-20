@@ -1,0 +1,8 @@
+---
+- name: Install Rancher on RKE
+  hosts: "{{ terraform.outputs.bastion.value }}"
+  remote_user: ubuntu
+  gather_facts: false
+  tasks:
+  - name:
+    shell: echo "Hello"

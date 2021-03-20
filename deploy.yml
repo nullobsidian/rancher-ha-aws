@@ -1,0 +1,3 @@
+---
+  - import_playbook: ansible/infrastructure.yml
+  - import_playbook: ansible/rancher.yml
