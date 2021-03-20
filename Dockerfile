@@ -19,6 +19,7 @@ RUN apk add --update \
     python3-dev libffi-dev openssl-dev build-base && \
     pip install cffi --upgrade && \
     pip install awscli --upgrade && \
+    echo -e "localhost ansible_connection=\"local\"\n" > /etc/ansible/hosts \
     wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
     wget -P /tmp/ https://github.com/rancher/cli/releases/download/v${RANCHER_VERSION}/rancher-linux-amd64-v${RANCHER_VERSION}.tar.gz && \
