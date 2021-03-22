@@ -3,7 +3,6 @@
   hosts: local
   gather_facts: false
   tasks:
-  
   - name: Import User Variables
     include_vars:
       file: "../config.json"
