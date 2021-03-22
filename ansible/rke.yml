@@ -7,9 +7,9 @@
     include_vars:
       file: "../config.json"
       name: config
-#  - name: RKE Kubernetes Installation
-#    shell:
-#      cmd: rke up --config ../rke/cluster.yml
+  - name: RKE Kubernetes Installation
+    shell:
+      cmd: rke up --config ../rke/cluster.yml
   - name: S3 State Bucket - Upload RKE State and Kube config files
     community.aws.s3_sync:
       bucket: "rancher-state-{{ config.cluster_id }}"
