@@ -1,6 +1,6 @@
 ---
 - name: Deploying Kubernetes with RKE
-  hosts: localhost
+  hosts: local
   gather_facts: false
   tasks:
   

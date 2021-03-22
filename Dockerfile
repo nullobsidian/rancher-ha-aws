@@ -1,9 +1,8 @@
 FROM alpine:latest
 
-ENV TERRAFORM_VERSION "0.14.3"
-ENV RKE_VERSION "1.2.3"
-ENV RANCHER_VERSION "2.4.10"
-ENV K8S_VERSION "1.19.4"
+ENV TERRAFORM_VERSION "0.14.8"
+ENV RKE_VERSION "1.2.6"
+ENV ANSIBLE_VERSION "3.1.0"
 
 RUN apk add --update \
     git \
@@ -12,22 +11,19 @@ RUN apk add --update \
     ca-certificates \
     vim \
     wget \
+    curl \
     bash \
     python3 \
-    py-pip && \
+    py3-pip && \
     apk add --update --virtual build-dependencies \
-    python3-dev libffi-dev openssl-dev build-base && \
-    pip install cffi --upgrade && \
-    pip install awscli --upgrade && \
-    mkdir -p /etc/ansible/hosts && echo -e "localhost ansible_connection=\"local\"\n" > /etc/ansible/hosts && \
-    wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    gcc musl-dev python3-dev libffi-dev openssl-dev cargo && \
+    pip3 install --no-cache wheel && \
+    pip3 install --no-cache ansible==${ANSIBLE_VERSION} && \
+    mkdir -p /etc/ansible && echo -e "[local]\nlocalhost ansible_connection=\"local\"\n" > /etc/ansible/hosts && \
+    wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip  &> /dev/null && \
     unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
-    wget -P /tmp/ https://github.com/rancher/cli/releases/download/v${RANCHER_VERSION}/rancher-linux-amd64-v${RANCHER_VERSION}.tar.gz && \
-    tar -xvf /tmp/rancher-linux-amd64-v${RANCHER_VERSION}.tar.gz && mv ./rancher-v${RANCHER_VERSION}/rancher /usr/bin/ && \
-    wget -P /tmp/ https://github.com/rancher/rke/releases/download/v${RKE_VERSION}/rke_linux-amd64 && \
+    wget -P /tmp/ https://github.com/rancher/rke/releases/download/v${RKE_VERSION}/rke_linux-amd64  &> /dev/null && \
     mv /tmp/rke_linux-amd64 /usr/bin/rke && \
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl && \
     apk --purge del build-dependencies && \
     rm -rf /tmp/* && \
     rm -rf /var/cache/apk/* && \

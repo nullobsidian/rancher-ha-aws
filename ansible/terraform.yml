@@ -1,6 +1,6 @@
 ---
 - name: Provision Higly-Available EC2 and VPC on AWS
-  hosts: localhost
+  hosts: local
   gather_facts: false
   tasks:
   - name: Import User Variables
