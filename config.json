@@ -4,7 +4,5 @@
    "instance_type": "m5.large",
    "cluster_id": "go7t81hq",
    "region": "us-east-2",
-   "key_name": "rke",
-   "ssh": "~/.ssh/rke", 
    "node_count": 3
 }

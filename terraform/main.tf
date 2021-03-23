@@ -46,12 +46,12 @@ data "template_file" "init" {
 }
 
 resource tls_private_key "rke"{
-  algorith = "RSA"
+  algorithm = "RSA"
   rsa_bits = "4096"
 }
 
 resource tls_private_key "bastion"{
-  algorith = "RSA"
+  algorithm = "RSA"
   rsa_bits = "4096"
 }
 
