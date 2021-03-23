@@ -18,7 +18,7 @@ locals {
   shared  = {
     join("", ["kubernetes.io/cluster/", var.cluster_id]) = "shared"
   }
-  cluster_name = join("", [ "rancher-", var.environment, "-", var.cluster_id])
+  cluster_name = join("-", [ "rancher", var.environment, var.cluster_id])
 }
 
 data "aws_ami" "default" {
@@ -57,16 +57,17 @@ resource tls_private_key "bastion"{
 
 resource local_file "bastion" {
   content = format("%s", tls_private_key.bastion.private_key_pem)
-  filename = join("-", ["~/.ssh/bastion", var.environment, var.cluster_id])
+  filename = pathexpand(join("-", ["~/.ssh/bastion", var.cluster_id]))
+  file_permission = 0600
 }
 
 resource "aws_key_pair" "rke" {
-  key_name   = join("-", ["rke", var.environment, var.cluster_id])
+  key_name   = join("-", ["rke", var.cluster_id])
   public_key = tls_private_key.rke.public_key_openssh
 }
 
 resource "aws_key_pair" "bastion" {
-  key_name   = join("-", ["bastion", var.environment, var.cluster_id])
+  key_name   = join("-", ["bastion", var.cluster_id])
   public_key = tls_private_key.bastion.public_key_openssh
 }
 

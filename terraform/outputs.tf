@@ -21,3 +21,7 @@ output "cloud_secret_key" {
 output "s3_backup" {
   value = aws_s3_bucket.backup.id
 }
+
+output "nodes_key" {
+  value = tls_private_key.rke.private_key_pem
+}

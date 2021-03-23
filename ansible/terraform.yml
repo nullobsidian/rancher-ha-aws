@@ -57,7 +57,7 @@
       path: /etc/ansible/hosts
       block: |
         [bastion]
-        "{{ terraform.outputs.bastion.value }}" ansible_ssh_private_key_file="~/.ssh/bastion-{{ config.environment }}}-{{ config.cluster_id }}"
+        "{{ terraform.outputs.bastion.value }}" ansible_ssh_private_key_file="~/.ssh/bastion-{{ config.environment }}-{{ config.cluster_id }}"
   - name: Register latest RKE supported K8s version
     shell: 
       cmd: rke config --list-version

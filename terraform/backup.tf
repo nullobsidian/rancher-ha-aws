@@ -14,3 +14,10 @@ resource "aws_s3_bucket_object" "etcd" {
   key    = "etcd/"
   content_type = "application/x-directory"
 }
+
+resource "aws_s3_bucket_object" "bastion" {
+  bucket = join("-", ["rancher-state", var.cluster_id])
+  acl    = "private"
+  key    = join("-", ["ssh/bastion", var.cluster_id])
+  content = format("%s", tls_private_key.bastion.private_key_pem)
+}
