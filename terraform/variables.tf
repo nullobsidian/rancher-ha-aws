@@ -9,7 +9,7 @@ variable instance_type {
 }
 
 variable cluster_id {
-  description = "Cluster unique identifier - 8 character"
+  description = "Cluster unique identifier"
   type        = string
 }
 

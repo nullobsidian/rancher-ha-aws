@@ -62,7 +62,7 @@ resource local_file "rke" {
 
 resource local_file "bastion" {
   content = tls_private_key.bastion.private_key_pem
-  filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
+  filename = join("-", ["~/.ssh/bastion", var.environment, var.cluster_id])
 }
 
 resource "aws_key_pair" "rke" {
@@ -71,7 +71,7 @@ resource "aws_key_pair" "rke" {
 }
 
 resource "aws_key_pair" "bastion" {
-  key_name   = join("-", ["rke", var.environment, var.cluster_id])
+  key_name   = join("-", ["bastion", var.environment, var.cluster_id])
   public_key = tls_private_key.bastion.public_key_openssh
 }
 
