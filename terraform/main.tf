@@ -56,12 +56,12 @@ resource tls_private_key "bastion"{
 }
 
 resource local_file "rke" {
-  content = tls_private_key.rke.private_key
+  content = tls_private_key.rke.private_key_pem
   filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
 }
 
 resource local_file "bastion" {
-  content = tls_private_key.bastion.private_key
+  content = tls_private_key.bastion.private_key_pem
   filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
 }
 
