@@ -55,11 +55,6 @@ resource tls_private_key "bastion"{
   rsa_bits = "4096"
 }
 
-resource local_file "rke" {
-  content = format("%s", tls_private_key.rke.private_key_pem)
-  filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
-}
-
 resource local_file "bastion" {
   content = format("%s", tls_private_key.bastion.private_key_pem)
   filename = join("-", ["~/.ssh/bastion", var.environment, var.cluster_id])
