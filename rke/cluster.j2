@@ -6,14 +6,14 @@ nodes:
       - controlplane
       - etcd
       - worker
-  ssh_key: |-
-{{ terraform.outputs.nodes_key.value | indent(4, True) }}
+    ssh_key: |-
+{{ terraform.outputs.nodes_key.value | indent(6, True) }}
 {% endfor %}
 bastion_host:
   address: {{ terraform.outputs.bastion.value }}
   user: ubuntu
   port: 22
-  ssh_key_path: ~/.ssh/bastion-{{ config.environment }}-{{ config.cluster_id }}
+  ssh_key_path: ~/.ssh/bastion-{{ config.cluster_id }}
 
 cluster_name: rancher-{{ config.environment }}-{{ config.cluster_id }}
 

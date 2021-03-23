@@ -1,8 +1,9 @@
 {
    "hosted_zone":  "prod.ghm-ops.com",
-   "environment": "production",
+   "environment": "staging",
    "instance_type": "m5.large",
    "cluster_id": "go7t81hq",
    "region": "us-east-2",
+   "letsEncrypt_email": "devops@goldenhippo.com",
    "node_count": 3
 }

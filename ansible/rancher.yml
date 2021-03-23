@@ -4,5 +4,55 @@
   remote_user: ubuntu
   gather_facts: false
   tasks:
-  - name:
-    shell: echo "Hello"
+  - name: Import User Variables
+    include_vars:
+      file: "../config.json"
+      name: config
+  - name: K8s - Setup kube config file
+    copy:
+      src: ../rke/kube_config_cluster.yml
+      dest: /home/ubuntu/.kube/config
+      mode: '0600'
+  - name: Create Cert-Manager Namespace
+    community.kubernetes.k8s:
+      name: cert-manager
+      api_version: v1
+      kind: Namespace
+      state: present
+  - name: Helm - Add Jetstack Repo
+    community.kubernetes.helm_repository:
+      name: jetstack
+      repo_url: "https://charts.jetstack.io"
+  - name: Helm - Install cert-manager chart
+    community.kubernetes.helm:
+      name: cert-manager
+      chart_ref: jetstack/cert-manager
+      release_namespace: cert-manager
+      release_values:
+        installCRDs: true
+  - name: K8s - Wait cert-manager Rollout
+    shell:
+      cmd: kubectl -n cert-manager rollout status deploy/cert-manager
+  - name: Create Rancher Namespace
+    community.kubernetes.k8s:
+      name: cattle-system
+      api_version: v1
+      kind: Namespace
+      state: present
+  - name: Helm - Add Rancher Stable Repo
+    community.kubernetes.helm_repository:
+      name: rancher-stable
+      repo_url: "https://releases.rancher.com/server-charts/stable"
+  - name: Helm - Install Rancher chart
+    community.kubernetes.helm:
+      name: rancher
+      chart_ref: rancher-stable/rancher
+      release_namespace: cattle-system
+      release_values:
+        hostname: rancher-{{ config.cluster_id }}.{{ config.hosted_zone }}
+        ingress.tls.source: letsEncrypt
+        letsEncrypt: "{{ config.letsEncrypt_email }}"
+        letsEncrypt.environment: "{{ config.environment }}"
+  - name: K8s - Wait rancher Rollout
+  shell:
+    cmd: kubectl -n rancher rollout status deploy/rancher

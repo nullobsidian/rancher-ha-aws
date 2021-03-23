@@ -19,7 +19,7 @@ RUN apk add --update \
     gcc musl-dev python3-dev libffi-dev openssl-dev cargo && \
     pip3 install --no-cache wheel boto boto3 botocore && \
     pip3 install --no-cache ansible==${ANSIBLE_VERSION} && \
-    ansible-galaxy collection install amazon.aws community.aws community.general && \
+    ansible-galaxy collection install community.general amazon.aws community.aws community.kubernetes && \
     wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip  &> /dev/null && \
     unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
     wget -P /tmp/ https://github.com/rancher/rke/releases/download/v${RKE_VERSION}/rke_linux-amd64  &> /dev/null && \

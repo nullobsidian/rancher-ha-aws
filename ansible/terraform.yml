@@ -38,7 +38,11 @@
       bucket: "rancher-state-{{ config.cluster_id }}"
       object: 'ssh/'
       mode: create
-  - name: Deploy Infrastructure
+  - name: Register K8s Version for Terraform Variable
+    shell:
+      cmd: rke config --list-version | sed -e 's/-rancher.*//g'
+    register: k8s_version
+  - name: AWS - Deploy HA Production Infrastructure
     community.general.terraform:
       project_path: '../terraform/'
       state: present
@@ -51,13 +55,15 @@
         region: "{{ config.region }}"
         dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
         encrypt: "true"
+      variables:
+        k8s_version: "{{ k8s_version.stdout }}"
     register: terraform
   - name: Append bastion to hosts file
     blockinfile:
       path: /etc/ansible/hosts
       block: |
         [bastion]
-        "{{ terraform.outputs.bastion.value }}" ansible_ssh_private_key_file="~/.ssh/bastion-{{ config.environment }}-{{ config.cluster_id }}"
+        {{ terraform.outputs.bastion.value }} ansible_ssh_private_key_file="~/.ssh/bastion-{{ config.cluster_id }}"
   - name: Register latest RKE supported K8s version
     shell: 
       cmd: rke config --list-version
@@ -69,4 +75,11 @@
     vars:
       nodes: "{{ terraform.outputs.instances_ips.value }}"
       version: "{{ rke_version.stdout }}"
+  - name: Wait for SSH on Bastion to be up
+    wait_for:
+      host: "{{ terraform.outputs.bastion.value }}"
+      port: 22
+      delay: 10
+      state: drained
   - meta: refresh_inventory
+  
