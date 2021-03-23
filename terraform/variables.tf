@@ -17,8 +17,3 @@ variable environment {
   description = "Name of the environment"
   type        = string
 }
-
-variable key_name {
-  description = "Name of key pair"
-  type        = string
-}
