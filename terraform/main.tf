@@ -56,7 +56,7 @@ resource tls_private_key "bastion"{
 }
 
 resource local_file "bastion" {
-  content = format("%s", tls_private_key.bastion.private_key_pem)
+  content = tls_private_key.bastion.private_key_pem
   filename = join("-", ["~/.ssh/bastion", var.environment, var.cluster_id])
 }
 
