@@ -2,8 +2,8 @@
 - name: AWS 
   import_playbook: ansible/terraform.yml
 
-- name: RKE
-  import_playbook: ansible/rke.yml
-  
-- name: Rancher
-  import_playbook: ansible/rancher.yml
+# - name: RKE
+#  import_playbook: ansible/rke.yml
+
+# - name: Rancher
+#  import_playbook: ansible/rancher.yml

@@ -67,6 +67,6 @@
       src: '../rke/cluster.j2'
       dest: '../rke/cluster.yml'
     vars:
-      nodes: "{{ terraform.outputs.instances_ips.value | ipaddr }}"
+      nodes: "{{ terraform.outputs.instances_ips.value }}"
       version: "{{ rke_version.stdout }}"
   - meta: refresh_inventory

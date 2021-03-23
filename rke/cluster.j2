@@ -8,13 +8,13 @@ nodes:
       - worker
 {% endfor %}
 
-ssh_key_path: "{{ config.ssh }}"
+ssh_key_path: ~/.ssh/rke-{{ config.environment }}}-{{ config.cluster_id }}
 
 bastion_host:
   address: {{ terraform.outputs.bastion.value }}
   user: ubuntu
   port: 22
-  ssh_key_path: "{{ config.ssh }}"
+  ssh_key_path: ~/.ssh/bastion-{{ config.environment }}}-{{ config.cluster_id }}
 
 cluster_name: rancher-{{ config.environment }}-{{ config.cluster_id }}
 

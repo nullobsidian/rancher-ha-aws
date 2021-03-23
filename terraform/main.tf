@@ -45,6 +45,36 @@ data "template_file" "init" {
   }
 }
 
+resource tls_private_key "rke"{
+  algorith = "RSA"
+  rsa_bits = "4096"
+}
+
+resource tls_private_key "bastion"{
+  algorith = "RSA"
+  rsa_bits = "4096"
+}
+
+resource local_file "rke" {
+  content = tls_private_key.rke.private_key
+  filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
+}
+
+resource local_file "bastion" {
+  content = tls_private_key.bastion.private_key
+  filename = join("-", ["~/.ssh/rke", var.environment, var.cluster_id])
+}
+
+resource "aws_key_pair" "rke" {
+  key_name   = join("-", ["rke", var.environment, var.cluster_id])
+  public_key = tls_private_key.rke.public_key_openssh
+}
+
+resource "aws_key_pair" "bastion" {
+  key_name   = join("-", ["rke", var.environment, var.cluster_id])
+  public_key = tls_private_key.bastion.public_key_openssh
+}
+
 // Rancher Node Pool
 resource "aws_instance" "default" {
   depends_on    = [module.vpc]
@@ -52,7 +82,7 @@ resource "aws_instance" "default" {
 
   ami           = data.aws_ami.default.id
   instance_type = var.instance_type
-  key_name      = var.key_name
+  key_name      = aws_key_pair.rke.id
 
   subnet_id              = module.vpc.private_subnets[count.index % length(module.vpc.private_subnets)]
   vpc_security_group_ids = flatten([aws_security_group.instances.id])
@@ -93,7 +123,7 @@ resource "aws_instance" "bastion" {
   depends_on    = [module.vpc]
   ami           = data.aws_ami.default.id
   instance_type = "t3.small"
-  key_name      = var.key_name
+  key_name      = aws_key_pair.bastion.id
 
   subnet_id              = module.vpc.public_subnets[0]
   vpc_security_group_ids = flatten([aws_security_group.instances.id])
