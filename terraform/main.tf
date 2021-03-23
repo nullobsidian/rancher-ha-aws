@@ -41,10 +41,21 @@ data "template_file" "init" {
   template = file("data/bootstrap.sh")
 
   vars = {
-    docker_version = "19.03"
+    docker_version = var.docker_version
   }
 }
 
+// Bastion - User Data
+data "template_file" "bastion" {
+  template = file("data/bastion.sh")
+
+  vars = {
+    k8s_version = var.k8s_version
+    node_key    = format("%s", tls_private_key.rke.private_key_pem)
+  }
+}
+
+// SSH Keys
 resource tls_private_key "rke"{
   algorithm = "RSA"
   rsa_bits = "4096"
@@ -117,12 +128,15 @@ resource "aws_instance" "default" {
 // Bastion Host
 resource "aws_instance" "bastion" {
   depends_on    = [module.vpc]
+
   ami           = data.aws_ami.default.id
   instance_type = "t3.small"
   key_name      = aws_key_pair.bastion.id
 
   subnet_id              = module.vpc.public_subnets[0]
   vpc_security_group_ids = flatten([aws_security_group.instances.id])
+
+  user_data = data.template_file.bastion.rendered
 
   root_block_device {
     volume_size = 30

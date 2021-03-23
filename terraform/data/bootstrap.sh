@@ -1,5 +1,4 @@
 #!/bin/bash -x
-apt-get update && apt-get upgrade -y && apt-get autoremove -y
 
 # Install Docker
 export DEBIAN_FRONTEND=noninteractive
@@ -17,4 +16,3 @@ mount /dev/nvme1n1 /var/lib/etcd/data && mount /dev/nvme2n1 /var/lib/etcd/wal
 echo '/dev/nvme1n1 /var/lib/etcd/data  ext4   defaults,nofail         0 2' >> /etc/fstab
 echo '/dev/nvme2n1 /var/lib/etcd/wal   ext4   defaults,nofail         0 2' >> /etc/fstab
 
-shutdown -rf now
