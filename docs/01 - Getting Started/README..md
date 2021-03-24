@@ -1,7 +1,5 @@
 # Getting Started
 
-![AWS HA EC2 Rancher Deployment](./diagram.png)
-
 | Variable            | Default | Required | Description                                                                       |
 |-----------------  --|---------|----------|-----------------------------------------------------------------------------------|
 | `region`            |         | yes      | AWS Region designed to be isolated from the other Amazon EC2 Regions              |
