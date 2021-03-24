@@ -1,0 +1,44 @@
+---
+- name: Destroy and remove RKE and all AWS EC2
+  hosts: localhost
+  tasks:
+  - name: Import User Variables
+    include_vars:
+      file: ./config.json
+      name: config
+  - name: Register K8s Version for Terraform Variable
+    shell:
+      cmd: rke config --list-version | sed -e 's/-rancher.*//g'
+    register: k8s_version
+  - name: AWS - Deploy HA Production Infrastructure
+    community.general.terraform:
+      project_path: 'terraform/'
+      state: absent
+      force_init: yes
+      init_reconfigure: yes
+      variables_files: '../config.json'
+      backend_config:
+        bucket: "rancher-state-{{ config.cluster_id }}"
+        key: "iac/terraform.tfstate"
+        region: "{{ config.region }}"
+        dynamodb_table: "rancher-lock-{{ config.cluster_id }}"
+        encrypt: "true"
+      variables:
+        k8s_version: "{{ k8s_version.stdout }}"
+  - name: Delete S3 State Bucket
+    amazon.aws.s3_bucket:
+      name: "rancher-state-{{ config.cluster_id }}"
+      state: absent
+      force: yes
+  - name: Delete Dynamo table for Locking
+    community.aws.dynamodb_table:
+      name: "rancher-lock-{{ config.cluster_id }}"
+      state: absent
+  - name: Delete local RKE state file
+    file: 
+      state: absent
+      path: rke/cluster.rkestate
+  - name: Delete local K8s config
+    file:
+      state: absent
+      path: rke/kube_config_cluster.yml

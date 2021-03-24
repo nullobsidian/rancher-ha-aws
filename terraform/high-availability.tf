@@ -70,10 +70,28 @@ resource "aws_lb" "default" {
   load_balancer_type = "network"
   subnets            = module.vpc.public_subnets[*]
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   tags = merge(
     local.tags,
     local.shared,
   )
+}
+
+data "aws_route53_zone" "rancher" {
+  name = var.hosted_zone
+  private_zone = false
+}
+
+resource "aws_route53_record" "nlb" {
+  zone_id = data.aws_route53_zone.rancher.id
+  name    =  join("", ["rancher-", var.cluster_id, var.hosted_zone])
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.default.dns_name
+    zone_id                = aws_lb.default.zone_id
+    evaluate_target_health = true
+  }
+
 }

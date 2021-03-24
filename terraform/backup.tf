@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "backup" {
-  bucket =  join("-", ["rancher-backup", var.cluster_id])
-  acl = "private"
+  bucket        =  join("-", ["rancher-backup", var.cluster_id])
+  acl           = "private"
+  force_destroy = true
 
   tags = merge(
     local.tags,
@@ -16,8 +17,8 @@ resource "aws_s3_bucket_object" "etcd" {
 }
 
 resource "aws_s3_bucket_object" "bastion" {
-  bucket = join("-", ["rancher-state", var.cluster_id])
-  acl    = "private"
-  key    = join("-", ["ssh/bastion", var.cluster_id])
+  bucket  = join("-", ["rancher-state", var.cluster_id])
+  acl     = "private"
+  key     = join("-", ["ssh/bastion", var.cluster_id])
   content = format("%s", tls_private_key.bastion.private_key_pem)
 }
