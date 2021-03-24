@@ -9,7 +9,6 @@ resource "aws_lb_target_group" "https" {
     port                = 80
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    timeout             = 6
     interval            = 10
   }
 }
@@ -25,7 +24,6 @@ resource "aws_lb_target_group" "http" {
     port                = "traffic-port"
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    timeout             = 6
     interval            = 10
   }
 }
@@ -33,14 +31,14 @@ resource "aws_lb_target_group" "http" {
 resource "aws_lb_target_group_attachment" "https" {
   count            = var.node_count
   target_group_arn = aws_lb_target_group.https.arn
-  target_id        = aws_instance.default[count.index]
+  target_id        = aws_instance.default[count.index].id
   port             = 443
 }
 
 resource "aws_lb_target_group_attachment" "http" {
   count            = var.node_count
   target_group_arn = aws_lb_target_group.http.arn
-  target_id        = aws_instance.default[count.index]
+  target_id        = aws_instance.default[count.index].id
   port             = 80
 }
 
@@ -57,7 +55,7 @@ resource "aws_lb_listener" "https" {
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.default.arn
-  port              = "443"
+  port              = "80"
   protocol          = "TCP"
 
   default_action {
