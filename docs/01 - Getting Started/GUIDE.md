@@ -2,7 +2,7 @@
 
 Docker Setup
 
-Download [Dockerfile](../Dockerfile)
+Download [Dockerfile](../../Dockerfile)
 ```
 git clone git@gitlab.com:GoldenHippoMedia/docker-library/iac-kops.git
 cd iac-kops/
