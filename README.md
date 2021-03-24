@@ -4,7 +4,11 @@ Rancher, the open-source multi-cluster orchestration platform, where operational
 
 This Infrastructure as Code implents high-availability and reduant Kubernetes installation achieved by running Rancher on multiple nodes and accessed through Bastion Host.
 
-## Getting Started
+![AWS HA EC2 Rancher Deployment](./diagram.png)
+
+## Docs
+
+Get started with ![Getting Started guide](https://github.com/nullobsidian/rancher-ha-aws/blob/master/docs/01%20-%20Getting%20Started/README..md) or review the rest of the Docs ![here](https://github.com/nullobsidian/rancher-ha-aws/tree/master/docs).
 
 
 ## Authors
