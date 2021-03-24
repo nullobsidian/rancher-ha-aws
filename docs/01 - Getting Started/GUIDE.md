@@ -44,6 +44,19 @@ git clone https://github.com/GoldenHippoMedia/rancher-ha-aws.git
 
 Configure your cluster by edit `config.json` file
 
+```json
+{  
+   "region": "us-east-2",
+   "cluster_id": "go7t81hq",
+   "environment": "production",
+   "hosted_zone":  "rancher.prod.example.com",
+   "instance_type": "m5.large",
+   "node_count": 3,
+   "letsEncrypt_email": "devops@example.com"
+}
+```
+**Options**
+
 | Variable            | Default | Required | Description                                                                       |
 |---------------------|---------|----------|-----------------------------------------------------------------------------------|
 | `region`            |         | yes      | AWS Region designed to be isolated from the other Amazon EC2 Regions              |
@@ -60,17 +73,6 @@ Configure your cluster by edit `config.json` file
 - \* [Rancher Management HA Nodes are 3, 5, or 7 ONLY (Maintain quorum)](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/)
 - \*\* [Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS](https://www.random.org/strings/?num=6&len=8&digits=on&loweralpha=on&unique=on&format=html&rnd=new)
 
-```json
-{  
-   "region": "us-east-2",
-   "cluster_id": "go7t81hq",
-   "environment": "production",
-   "hosted_zone":  "rancher.prod.example.com",
-   "instance_type": "m5.large",
-   "node_count": 3,
-   "letsEncrypt_email": "devops@example.com"
-}
-```
 #### Step 4: Deploy Rancher on AWS with HA EC2
 
 ```shell
