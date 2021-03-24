@@ -13,12 +13,12 @@ docker build -t rancher-ha-aws .
 
 Run the container in the background
 ```shell
-docker run -itd --name $cluster_id-rancher-prod rancher-ha-aws
+docker run -itd --name rancher-prod rancher-ha-aws
 ```
 
 Bash into the container to gain access
 ```shell
-docker exec prod-$cluster_id-rancher-prod /bin/bash
+docker exec rancher-prod /bin/bash
 ```
 ---
 
@@ -42,7 +42,7 @@ git clone https://github.com/GoldenHippoMedia/rancher-ha-aws.git
 
 ### Step 3: Configure Configuration Variables
 
-Configure your cluster by edit `config.json` file
+Edit `config.json` file to configure your cluster
 
 ```json
 {  
@@ -70,8 +70,9 @@ Configure your cluster by edit `config.json` file
 
 **Important**:
 
-- \* [Rancher Management HA Nodes are 3, 5, or 7 ONLY (Maintain quorum)](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/)
-- \*\* [Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS](https://www.random.org/strings/?num=6&len=8&digits=on&loweralpha=on&unique=on&format=html&rnd=new)
+\* [Rancher Management HA Nodes are 3, 5, or 7 ONLY (Maintain quorum)](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/)
+
+\*\* [Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS](https://www.random.org/strings/?num=6&len=8&digits=on&loweralpha=on&unique=on&format=html&rnd=new)
 
 #### Step 4: Deploy Rancher on AWS with HA EC2
 
