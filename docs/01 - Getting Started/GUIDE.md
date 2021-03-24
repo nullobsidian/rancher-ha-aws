@@ -1,9 +1,7 @@
 # Getting Started
 
-![AWS HA EC2 Rancher Deployment](./diagram.png)
-
 | Variable            | Default | Required | Description                                                                       |
-|-----------------  --|---------|----------|-----------------------------------------------------------------------------------|
+|---------------------|---------|----------|-----------------------------------------------------------------------------------|
 | `region`            |         | yes      | AWS Region designed to be isolated from the other Amazon EC2 Regions              |
 | `cluster_id`*       |         | yes      | Cluster ID is a unique identification (Example: vq5ud3e5 )                        |
 | `environment`       |         | yes      | Environment for a group of multiple server instances and identical configurations |
