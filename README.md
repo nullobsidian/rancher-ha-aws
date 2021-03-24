@@ -8,7 +8,7 @@ This infrastructure as codde implents high-availability, reduant production grad
 
 ## Docs
 
-Get started with [Getting Started guide](./docs/01_Getting_Started/GUIDE.md) or review the rest of the Docs [here](./docs/).
+Get started with [Getting Started guide](./docs/Getting_Started/GUIDE.md) or review the rest of the Docs [here](./docs/).
 
 ## Authors
 
