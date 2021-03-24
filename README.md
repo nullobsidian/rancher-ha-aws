@@ -8,7 +8,7 @@ This infrastructure as codde implents high-availability, reduant production grad
 
 ## Docs
 
-Get started with [Getting Started guide](https://github.com/nullobsidian/rancher-ha-aws/blob/master/docs/01%20-%20Getting%20Started/GUIDE.md) or review the rest of the Docs [here](https://github.com/nullobsidian/rancher-ha-aws/tree/master/docs).
+Get started with [Getting Started guide](docs/01_Getting_Started/GUIDE.md) or review the rest of the Docs [here](docs/).
 
 ## Authors
 
