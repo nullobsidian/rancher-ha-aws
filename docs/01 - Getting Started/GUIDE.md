@@ -1,6 +1,6 @@
 # Getting Started
 
-Docker Setup
+### Docker Setup
 
 Download [Dockerfile](../../Dockerfile)
 1. Click "Raw"
@@ -24,7 +24,7 @@ docker exec rancher-prod /bin/bash
 
 ### Step 1: AWS
 
-Edit `~/.bashrc` and append for Terraform required variables 
+Edit `~/.bashrc` and append for AWS variables 
 
 ```shell
 export AWS_ACCESS_KEY_ID="PVBIPIGVNPXTZALCOMZAD"
