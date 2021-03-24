@@ -7,26 +7,42 @@ Download [Dockerfile](../../Dockerfile)
 2. Right-Click and select "Save As" and type "Dockerfile" 
 
 Build the image
+```shell
+docker build -t rancher-ha-aws .
 ```
-docker build -t iac-kops:latest .
-```
-Run the container in the background
-```
-docker run -itd --name dev-k8s-iac --hostname dev-k8s-iac iac-kops:latest 
-zsh into the container
 
-docker exec -it dev-k8s-iac /bin/zsh 
-Download or clone this repo, inside the container
+Run the container in the background
+```shell
+docker run -itd --name $cluster_id-rancher-prod rancher-ha-aws
 ```
-git clone https://github.com/GoldenHippoMedia/k8s-iac-aws.git
-cd k8s-iac-aws/
+
+Bash into the container to gain access
+```shell
+docker exec prod-$cluster_id-rancher-prod /bin/bash
+```
 ---
+
+### Step 1: AWS
+
+Edit `~/.bashrc` and append for Terraform required variables 
 
 ```shell
 export AWS_ACCESS_KEY_ID="PVBIPIGVNPXTZALCOMZAD"
 export AWS_SECRET_ACCESS_KEY="R\KFSGGNBDPHUDRWQAWC\RGUPJ*BXRF\HYE//DAVS"
 export AWS_DEFAULT_REGION="us-east-2"
 ```
+
+### Step 2: Clone Repo
+
+Clone directory in your root home directory
+
+```shell
+git clone https://github.com/GoldenHippoMedia/rancher-ha-aws.git
+```
+
+### Step 3: Configure Configuration Variables
+
+Configure your cluster by edit `config.json` file
 
 | Variable            | Default | Required | Description                                                                       |
 |---------------------|---------|----------|-----------------------------------------------------------------------------------|
@@ -39,9 +55,10 @@ export AWS_DEFAULT_REGION="us-east-2"
 | `docker_version`    | 20.10   | no       | Docker version to install for all nodes                                           |
 | `letsEncrypt_email` |         | yes      | Email used to notified when SSL certificate is set to expire                      |
 
-\* [Rancher Management HA Nodes are 3, 5, or 7 (Maintain quorum)](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/)
+**Important**:
 
-\*\* [Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS](https://www.random.org/strings/?num=6&len=8&digits=on&loweralpha=on&unique=on&format=html&rnd=new)
+- \* [Rancher Management HA Nodes are 3, 5, or 7 ONLY (Maintain quorum)](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/)
+- \*\* [Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS](https://www.random.org/strings/?num=6&len=8&digits=on&loweralpha=on&unique=on&format=html&rnd=new)
 
 ```json
 {  
@@ -53,4 +70,9 @@ export AWS_DEFAULT_REGION="us-east-2"
    "node_count": 3,
    "letsEncrypt_email": "devops@example.com"
 }
+```
+#### Step 4: Deploy Rancher on AWS with HA EC2
+
+```shell
+ansible-playbok deploy.yml
 ```
