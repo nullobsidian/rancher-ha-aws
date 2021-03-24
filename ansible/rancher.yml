@@ -50,9 +50,12 @@
       release_namespace: cattle-system
       release_values:
         hostname: rancher-{{ config.cluster_id }}.{{ config.hosted_zone }}
-        ingress.tls.source: letsEncrypt
-        letsEncrypt: "{{ config.letsEncrypt_email }}"
-        letsEncrypt.environment: "{{ config.environment }}"
+        ingress:
+          tls:
+            source: letsEncrypt
+        letsEncrypt: 
+          email: "{{ config.letsEncrypt_email }}"
+          environment: "{{ config.environment }}"
   - name: K8s - Wait rancher Rollout
-  shell:
-    cmd: kubectl -n rancher rollout status deploy/rancher
+    shell:
+      cmd: kubectl -n cattle-system rollout status deploy/rancher
