@@ -3,10 +3,9 @@
 Docker Setup
 
 Download [Dockerfile](../../Dockerfile)
-```
-git clone git@gitlab.com:GoldenHippoMedia/docker-library/iac-kops.git
-cd iac-kops/
-```
+1. Click "Raw"
+2. Right-Click and select "Save As" and type "Dockerfile" 
+
 Build the image
 ```
 docker build -t iac-kops:latest .
