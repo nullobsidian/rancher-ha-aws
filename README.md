@@ -18,11 +18,23 @@ This Infrastructure as Code implents high-availability Kubernetes installation a
 | letsEncrypt_email |         | yes      | Email used to notified when SSL certificate is set to expire                                                       |
 
 
-* Rancher Management HA Nodes are 3, 5, or 7 (Maintain quorum)
+\* Rancher Management HA Nodes are 3, 5, or 7 (Maintain quorum)
 - https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/
 
-** Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS
+\*\* Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS
 - https://cutt.ly/SxqZT23
+
+```json
+{  
+   "region": "us-east-2",
+   "cluster_id": "go7t81hq",
+   "environment": "production",
+   "hosted_zone":  "rancher.prod.example.com",
+   "instance_type": "m5.large",
+   "node_count": 3,
+   "letsEncrypt_email": "devops@example.com"
+}
+```
 
 ## Authors
 
