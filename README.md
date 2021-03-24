@@ -24,7 +24,6 @@ This Infrastructure as Code implents high-availability Kubernetes installation a
 ** Generate string ID with ONLY lowercase and numbers - 8 CHARACTERS
 - https://cutt.ly/SxqZT23
 
-
 ## Authors
 
 * **Moses Marquez** - [nullobsidian](https://github.com/nullobsidian)
