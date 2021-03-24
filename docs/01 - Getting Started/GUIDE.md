@@ -1,5 +1,34 @@
 # Getting Started
 
+Docker Setup
+
+Download [Dockerfile](../Dockerfile)
+```
+git clone git@gitlab.com:GoldenHippoMedia/docker-library/iac-kops.git
+cd iac-kops/
+```
+Build the image
+```
+docker build -t iac-kops:latest .
+```
+Run the container in the background
+```
+docker run -itd --name dev-k8s-iac --hostname dev-k8s-iac iac-kops:latest 
+zsh into the container
+
+docker exec -it dev-k8s-iac /bin/zsh 
+Download or clone this repo, inside the container
+```
+git clone https://github.com/GoldenHippoMedia/k8s-iac-aws.git
+cd k8s-iac-aws/
+---
+
+```shell
+export AWS_ACCESS_KEY_ID="PVBIPIGVNPXTZALCOMZAD"
+export AWS_SECRET_ACCESS_KEY="R\KFSGGNBDPHUDRWQAWC\RGUPJ*BXRF\HYE//DAVS"
+export AWS_DEFAULT_REGION="us-east-2"
+```
+
 | Variable            | Default | Required | Description                                                                       |
 |---------------------|---------|----------|-----------------------------------------------------------------------------------|
 | `region`            |         | yes      | AWS Region designed to be isolated from the other Amazon EC2 Regions              |
