@@ -2,7 +2,7 @@
 
 Rancher, the open-source multi-cluster orchestration platform, where operational teams deploy, manage and secure enterprise Kubernetes built on RKE.
 
-This infrastructure as codde implents high-availability, reduant production grade RKE cluster with latest, and stable Rancher installation achieved by running Rancher on multiple nodes and accessed through Bastion Host.
+Infrastructure as code, deploys high-availability, reduant, production grade, RKE cluster with latest, and stable Rancher installation achieved by running Rancher on multiple nodes and accessed through secure Bastion Host.
 
 ![AWS HA EC2 Rancher Deployment](./diagram.png)
 
