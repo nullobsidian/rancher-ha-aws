@@ -8,7 +8,7 @@ This Infrastructure as Code implents high-availability and reduant Kubernetes in
 
 ## Docs
 
-Get started with ![Getting Started guide](https://github.com/nullobsidian/rancher-ha-aws/blob/master/docs/01%20-%20Getting%20Started/README..md) or review the rest of the Docs ![here](https://github.com/nullobsidian/rancher-ha-aws/tree/master/docs).
+Get started with [Getting Started guide](https://github.com/nullobsidian/rancher-ha-aws/blob/master/docs/01%20-%20Getting%20Started/README..md) or review the rest of the Docs [here](https://github.com/nullobsidian/rancher-ha-aws/tree/master/docs).
 
 
 ## Authors
